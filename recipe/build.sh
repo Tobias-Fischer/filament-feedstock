@@ -50,7 +50,7 @@ build_targets=(
 if [[ "${target_platform}" == linux-* ]]; then
   cmake_options+=(
     -DFILAMENT_ENABLE_EXPERIMENTAL_GCC_SUPPORT=ON
-    -DFILAMENT_SUPPORTS_EGL_ON_LINUX=ON
+    -DFILAMENT_SUPPORTS_EGL_ON_LINUX=OFF
     "-DCMAKE_BUILD_RPATH=\$ORIGIN;\$ORIGIN/../lib"
     "-DCMAKE_INSTALL_RPATH=\$ORIGIN;\$ORIGIN/../lib"
   )

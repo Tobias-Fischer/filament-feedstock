@@ -10,6 +10,12 @@ find_package(Filament CONFIG REQUIRED)
 add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world PRIVATE Filament::filament)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+  find_package(X11 REQUIRED)
+  target_compile_definitions(hello_world PRIVATE FILAMENT_TEST_X11=1)
+  target_link_libraries(hello_world PRIVATE X11::X11)
+endif()
+
 set(material_output "${CMAKE_CURRENT_BINARY_DIR}/bakedColor.filamat")
 add_custom_command(
   OUTPUT "${material_output}"

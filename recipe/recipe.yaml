@@ -26,7 +26,7 @@ source:
     - patches/0005-fix-windows-shared-library-boundaries.patch
 
 build:
-  number: 1
+  number: 2
 
 requirements:
   build:
@@ -44,11 +44,17 @@ requirements:
       then: libgl-devel
     - if: linux and target_platform != "linux-ppc64le"
       then: libgles-devel
+    - if: linux and target_platform != "linux-ppc64le"
+      then: libxcb
     - libpng
     # Use Filament's bundled copy until conda-forge publishes meshoptimizer
     # for Windows, Apple Silicon, and Linux Arm/PPC.
     - if: target_platform in ("linux-64", "osx-64")
       then: meshoptimizer
+    - if: linux and target_platform != "linux-ppc64le"
+      then: xorg-libx11
+    - if: linux and target_platform != "linux-ppc64le"
+      then: xorg-xorgproto
     - zlib
     - zstd
   run:
@@ -74,8 +80,16 @@ tests:
         - ${{ compiler('cxx') }}
         - ${{ stdlib('c') }}
         - cmake
+        - if: target_platform == "linux-64"
+          then: libvulkan-loader
+        - if: target_platform == "linux-64"
+          then: mesa-lavapipe
         - ninja
         - python ${{ python }}.*
+        - if: target_platform == "linux-64"
+          then: xorg-libx11
+        - if: target_platform == "linux-64"
+          then: xorg-xorgproto
     script:
       - python check_package_payload.py
       - matc --help
@@ -88,7 +102,9 @@ tests:
         then: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat
       - cmake -S test-cmake -B test-cmake-build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - cmake --build test-cmake-build --verbose
-      - if: unix
+      - if: target_platform == "linux-64"
+        then: VK_DRIVER_FILES="$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json" xvfb-run -a -s "-screen 0 640x480x24 -ac -extension GLX +extension RANDR" ./test-cmake-build/hello_world
+      - if: unix and target_platform != "linux-64"
         then: ./test-cmake-build/hello_world
       - if: win
         then: .\test-cmake-build\hello_world.exe
