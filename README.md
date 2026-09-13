@@ -16,7 +16,7 @@ iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
 command line tools and a constrained shared C++ development surface for
 downstream consumers.
 The optional filament-filagui-static output is built against Dear ImGui
-1.92.5 docking headers and leaves the final ImGui linkage to consumers.
+1.92.9 docking headers and leaves the final ImGui linkage to consumers.
 
 Current build status
 ====================
