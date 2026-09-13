@@ -120,10 +120,11 @@ outputs:
         requirements:
           run:
             - cmake
+            - ninja
             - python ${{ python }}.*
         script:
           - python check_package_payload.py
-          - cmake -S test-cmake-core -B test-cmake-core-build
+          - cmake -S test-cmake-core -B test-cmake-core-build -G Ninja
           - matc --help
           - matinfo --help
           - cmgen --help
