@@ -27,6 +27,8 @@ source:
       - patches/0005-fix-windows-shared-library-boundaries.patch
       # Build Filagui against the selected consumer-compatible ImGui sources.
       - patches/0006-use-selected-imgui-source.patch
+      # Use the current ImDrawData API required by Dear ImGui 1.92.9 docking.
+      - patches/0007-use-current-imgui-command-list-api.patch
   # Build Filagui and test its consumer-supplied ImGui contract against docking.
   - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz
     sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73
