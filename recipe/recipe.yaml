@@ -35,7 +35,7 @@ source:
     target_directory: imgui-docking
 
 build:
-  number: 1
+  number: 2
 
 outputs:
   - staging:
@@ -91,6 +91,7 @@ outputs:
         - include/backend
         - include/filaflat
         - include/filament
+        - include/filameshio
         - include/geometry
         - include/math
         - include/utils
@@ -101,6 +102,7 @@ outputs:
         - Library/include/backend
         - Library/include/filaflat
         - Library/include/filament
+        - Library/include/filameshio
         - Library/include/geometry
         - Library/include/math
         - Library/include/utils
@@ -111,6 +113,7 @@ outputs:
         - Library/lib/filabridge.lib
         - Library/lib/filaflat.lib
         - Library/lib/filament.lib
+        - Library/lib/filameshio.lib
         - Library/lib/geometry.lib
         - Library/lib/utils.lib
     requirements:
@@ -160,12 +163,16 @@ outputs:
             - test-cmake-core
         requirements:
           run:
+            - ${{ compiler('cxx') }}
+            - ${{ stdlib('c') }}
             - cmake
             - ninja
             - python ${{ python }}.*
         script:
           - python check_package_payload.py
-          - cmake -S test-cmake-core -B test-cmake-core-build -G Ninja
+          - cmake -S test-cmake-core -B test-cmake-core-build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          - cmake --build test-cmake-core-build --verbose
+          - ctest --test-dir test-cmake-core-build --output-on-failure --no-tests=error
           - matc --help
           - matinfo --help
           - cmgen --help

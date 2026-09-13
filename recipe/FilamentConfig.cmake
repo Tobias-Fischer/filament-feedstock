@@ -89,6 +89,7 @@ _filament_import_library(utils utils)
 _filament_import_library(filabridge filabridge)
 _filament_import_library(filaflat filaflat)
 _filament_import_library(backend backend)
+_filament_import_library(filameshio filameshio)
 _filament_import_library(geometry geometry)
 _filament_import_library(filament filament)
 
@@ -116,6 +117,9 @@ if(Filament_FOUND)
   set_target_properties(Filament::filaflat PROPERTIES
     INTERFACE_LINK_LIBRARIES "Filament::filabridge;Filament::utils"
   )
+  set_target_properties(Filament::filameshio PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Filament::filament"
+  )
   if(TARGET Filament::filagui)
     # Filagui leaves Dear ImGui unresolved so consumers can link one compatible
     # mainline or docking implementation themselves.
@@ -138,5 +142,12 @@ if(NOT TARGET Filament::matc)
   add_executable(Filament::matc IMPORTED)
   set_target_properties(Filament::matc PROPERTIES
     IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/bin/matc${CMAKE_EXECUTABLE_SUFFIX}"
+  )
+endif()
+
+if(NOT TARGET Filament::filamesh)
+  add_executable(Filament::filamesh IMPORTED)
+  set_target_properties(Filament::filamesh PROPERTIES
+    IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/bin/filamesh${CMAKE_EXECUTABLE_SUFFIX}"
   )
 endif()

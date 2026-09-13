@@ -42,6 +42,7 @@ call :install_library "build\filament" filament || exit /b 1
 call :install_library "build\filament\backend" backend || exit /b 1
 call :install_library "build\libs\filabridge" filabridge || exit /b 1
 call :install_library "build\libs\filaflat" filaflat || exit /b 1
+call :install_library "build\libs\filameshio" filameshio || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
 if not exist "build\libs\filagui\filagui.lib" exit /b 1
@@ -51,6 +52,7 @@ xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1
 xcopy /E /I /Y "libs\filabridge\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "libs\filaflat\include\filaflat" "%LIBRARY_INC%\filaflat" || exit /b 1
+xcopy /E /I /Y "libs\filameshio\include\filameshio" "%LIBRARY_INC%\filameshio" || exit /b 1
 xcopy /E /I /Y "libs\filagui\include\filagui" "%LIBRARY_INC%\filagui" || exit /b 1
 xcopy /E /I /Y "libs\geometry\include\geometry" "%LIBRARY_INC%\geometry" || exit /b 1
 xcopy /E /I /Y "libs\math\include\math" "%LIBRARY_INC%\math" || exit /b 1

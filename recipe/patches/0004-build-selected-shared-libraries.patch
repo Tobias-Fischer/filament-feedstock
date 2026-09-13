@@ -137,6 +137,17 @@
  target_link_libraries(${TARGET} filabridge utils)
  
  if (FILAMENT_SUPPORTS_VULKAN)
+--- a/libs/filameshio/CMakeLists.txt
++++ b/libs/filameshio/CMakeLists.txt
+@@ -19,7 +19,7 @@
+ # Includes and target definition
+ # ==================================================================================================
+ include_directories(${PUBLIC_HDR_DIR})
+-add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
++add_library(${TARGET} SHARED ${PUBLIC_HDRS} ${SRCS})
+ target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+ set_target_properties(${TARGET} PROPERTIES FOLDER Libs)
+ target_link_libraries(${TARGET}
 --- a/libs/geometry/CMakeLists.txt
 +++ b/libs/geometry/CMakeLists.txt
 @@ -25,7 +25,11 @@
