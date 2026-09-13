@@ -16,7 +16,13 @@ if len(metadata_paths) != 1:
     fail(f"expected exactly one filament package metadata file, found {metadata_paths!r}")
 
 with open(metadata_paths[0], encoding="utf-8") as metadata_file:
-    package_files = json.load(metadata_file)["files"]
+    metadata = json.load(metadata_file)
+
+package_files = metadata["files"]
+
+for dependency_name in ("imgui", "libvulkan-headers"):
+    if any(dependency.split()[0] == dependency_name for dependency in metadata["depends"]):
+        fail(f"filament package must leave {dependency_name} to the consumer")
 
 static_archives = sorted(path for path in package_files if path.endswith(".a"))
 if static_archives:
@@ -70,6 +76,8 @@ for required_path in (
         fail(f"filament package does not ship {required_path}")
 
 for forbidden_path in (
+    f"{package_root}include/filagui/ImGuiHelper.h",
+    f"{package_root}lib/filagui.lib" if sys.platform == "win32" else "lib/libfilagui.a",
     f"{package_root}bin/basisu{executable_suffix}",
     "lib/libabseil.a",
     "lib/libbasis_transcoder.a",

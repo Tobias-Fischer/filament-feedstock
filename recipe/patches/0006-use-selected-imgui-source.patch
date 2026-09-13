@@ -1,0 +1,12 @@
+--- a/third_party/imgui/tnt/CMakeLists.txt
++++ b/third_party/imgui/tnt/CMakeLists.txt
+@@ -1,7 +1,8 @@
+ cmake_minimum_required(VERSION 3.19)
+ project(imgui)
+ 
+-set(OUR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
++set(FILAMENT_IMGUI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." CACHE PATH "Dear ImGui source directory")
++set(OUR_DIR "${FILAMENT_IMGUI_SOURCE_DIR}")
+ 
+ set(TARGET              imgui)
+ 

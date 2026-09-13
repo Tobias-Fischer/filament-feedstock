@@ -4,10 +4,10 @@ Date: Thu, 14 May 2026 00:37:00 -0700
 Subject: [PATCH] Use selected system libraries
 
 ---
- CMakeLists.txt                | 40 +++++++++++++++++++++++++++++++++++-----
+ CMakeLists.txt                | 36 ++++++++++++++++++++++++++++++++----
  tools/cmgen/CMakeLists.txt    |  2 +-
  tools/filamesh/CMakeLists.txt |  5 ++++-
- 3 files changed, 40 insertions(+), 7 deletions(-)
+ 3 files changed, 36 insertions(+), 6 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt

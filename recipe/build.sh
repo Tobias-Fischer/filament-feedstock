@@ -13,6 +13,7 @@ cmake_options=(
   -DDIST_DIR=.
   -DFILAMENT_BUILD_TESTING=OFF
   -DFILAMENT_ENABLE_LTO=OFF
+  -DFILAMENT_IMGUI_SOURCE_DIR="${SRC_DIR}/imgui-docking"
   -DFILAMENT_USE_EXTERNAL_ABSL=ON
   -DFILAMENT_SKIP_SAMPLES=ON
   -DFILAMENT_SKIP_SDL2=ON
@@ -28,6 +29,7 @@ build_targets=(
   diffimg
   filabridge
   filaflat
+  filagui
   filament
   filamesh
   geometry
@@ -106,6 +108,7 @@ for header_dir in \
   filament/backend/include/backend \
   libs/filabridge/include/filament \
   libs/filaflat/include/filaflat \
+  libs/filagui/include/filagui \
   libs/geometry/include/geometry \
   libs/math/include/math \
   libs/utils/include/utils; do
@@ -137,6 +140,9 @@ for shared_library in "${filament_shared_libraries[@]}"; do
   test -f "${source_path}"
   install -m 755 "${source_path}" "${PREFIX}/lib/$(basename "${source_path}")"
 done
+
+test -f build/libs/filagui/libfilagui.a
+install -m 644 build/libs/filagui/libfilagui.a "${PREFIX}/lib/libfilagui.a"
 
 if [[ "${target_platform}" == osx-* ]]; then
   for dylib in "${PREFIX}"/lib/lib*.dylib; do

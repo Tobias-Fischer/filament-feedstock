@@ -49,6 +49,29 @@ function(_filament_import_library target_name library_name)
   endif()
 endfunction()
 
+function(_filament_import_static_library target_name library_name)
+  if(WIN32)
+    set(_filament_library "${PACKAGE_PREFIX_DIR}/lib/${library_name}.lib")
+  else()
+    set(_filament_library "${PACKAGE_PREFIX_DIR}/lib/lib${library_name}.a")
+  endif()
+
+  if(NOT EXISTS "${_filament_library}")
+    set(Filament_FOUND FALSE PARENT_SCOPE)
+    set(Filament_NOT_FOUND_MESSAGE "Missing Filament static library: ${_filament_library}" PARENT_SCOPE)
+    return()
+  endif()
+
+  if(NOT TARGET Filament::${target_name})
+    add_library(Filament::${target_name} STATIC IMPORTED)
+    set_target_properties(Filament::${target_name} PROPERTIES
+      IMPORTED_LOCATION "${_filament_library}"
+      INTERFACE_COMPILE_FEATURES cxx_std_20
+      INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+    )
+  endif()
+endfunction()
+
 if(WIN32)
   # The generated GL/Vulkan loaders are linked statically into backend.dll.
   set(_filament_backend_dependencies "Filament::utils")
@@ -69,6 +92,15 @@ _filament_import_library(backend backend)
 _filament_import_library(geometry geometry)
 _filament_import_library(filament filament)
 
+if(WIN32)
+  set(_filament_filagui_library "${PACKAGE_PREFIX_DIR}/lib/filagui.lib")
+else()
+  set(_filament_filagui_library "${PACKAGE_PREFIX_DIR}/lib/libfilagui.a")
+endif()
+if(EXISTS "${_filament_filagui_library}")
+  _filament_import_static_library(filagui filagui)
+endif()
+
 if(Filament_FOUND)
   set_target_properties(Filament::utils PROPERTIES
     INTERFACE_LINK_LIBRARIES "tsl::robin_map"
@@ -84,6 +116,13 @@ if(Filament_FOUND)
   set_target_properties(Filament::filaflat PROPERTIES
     INTERFACE_LINK_LIBRARIES "Filament::filabridge;Filament::utils"
   )
+  if(TARGET Filament::filagui)
+    # Filagui leaves Dear ImGui unresolved so consumers can link one compatible
+    # mainline or docking implementation themselves.
+    set_target_properties(Filament::filagui PROPERTIES
+      INTERFACE_LINK_LIBRARIES "Filament::filament"
+    )
+  endif()
   set_target_properties(Filament::backend PROPERTIES
     INTERFACE_LINK_LIBRARIES "${_filament_backend_dependencies}"
   )
