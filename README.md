@@ -15,6 +15,8 @@ Filament is a real-time physically based rendering engine for Android,
 iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
 command line tools and a constrained shared C++ development surface for
 downstream consumers.
+The optional filament-filagui-static output is built against Dear ImGui
+1.92.5 docking headers and leaves the final ImGui linkage to consumers.
 
 Current build status
 ====================
@@ -68,6 +70,7 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-filament-green.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-filament--filagui--static-green.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) |
 
 Installing filament
 ===================
@@ -86,7 +89,7 @@ How to use
 <summary>With conda</summary>
 
 ```
-conda install filament
+conda install filament filament-filagui-static
 ```
 
 </details>
@@ -95,7 +98,7 @@ conda install filament
 <summary>With mamba</summary>
 
 ```
-mamba install filament
+mamba install filament filament-filagui-static
 ```
 
 </details>
@@ -105,9 +108,9 @@ mamba install filament
 
 ```
 # for adding to your local project
-pixi add filament
+pixi add filament filament-filagui-static
 # for installing globally
-pixi global install filament
+pixi global install filament filament-filagui-static
 ```
 
 </details>
