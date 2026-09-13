@@ -16,7 +16,9 @@ iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
 command line tools and a constrained shared C++ development surface for
 downstream consumers.
 The optional filament-filagui-static output is built against Dear ImGui
-1.92.9 docking headers and leaves the final ImGui linkage to consumers.
+1.92.9 docking headers but does not package or link an ImGui
+implementation. Consumers must link exactly one matching implementation:
+conda-forge's mainline imgui package or their own docking build.
 
 Current build status
 ====================
