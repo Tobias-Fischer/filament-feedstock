@@ -7,17 +7,29 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Filament CONFIG REQUIRED)
 
-set(imgui_source_dir "${CMAKE_CURRENT_LIST_DIR}/../imgui-docking")
-add_library(consumer_imgui STATIC
-  "${imgui_source_dir}/imgui.cpp"
-  "${imgui_source_dir}/imgui_draw.cpp"
-  "${imgui_source_dir}/imgui_tables.cpp"
-  "${imgui_source_dir}/imgui_widgets.cpp"
-)
-target_include_directories(consumer_imgui PUBLIC "${imgui_source_dir}")
+option(FILAGUI_TEST_DOCKING "Test with the Dear ImGui docking branch" OFF)
+
+if(FILAGUI_TEST_DOCKING)
+  set(imgui_source_dir "${CMAKE_CURRENT_LIST_DIR}/../imgui-docking")
+  add_library(consumer_imgui STATIC
+    "${imgui_source_dir}/imgui.cpp"
+    "${imgui_source_dir}/imgui_draw.cpp"
+    "${imgui_source_dir}/imgui_tables.cpp"
+    "${imgui_source_dir}/imgui_widgets.cpp"
+  )
+  target_include_directories(consumer_imgui PUBLIC "${imgui_source_dir}")
+else()
+  find_package(imgui CONFIG REQUIRED)
+endif()
 
 add_executable(hello_world hello_world.cpp)
-target_link_libraries(hello_world PRIVATE Filament::filagui consumer_imgui)
+target_link_libraries(hello_world PRIVATE Filament::filagui)
+if(FILAGUI_TEST_DOCKING)
+  target_compile_definitions(hello_world PRIVATE FILAGUI_TEST_DOCKING=1)
+  target_link_libraries(hello_world PRIVATE consumer_imgui)
+else()
+  target_link_libraries(hello_world PRIVATE imgui::imgui)
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
   find_package(X11 REQUIRED)

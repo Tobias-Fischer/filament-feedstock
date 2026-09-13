@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: filament
   version: "1.76.1"
-  imgui_version: "1.92.5"
+  imgui_version: "1.92.9"
   python: "3.12"
 
 recipe:
@@ -29,7 +29,7 @@ source:
       - patches/0006-use-selected-imgui-source.patch
   # Build Filagui and test its consumer-supplied ImGui contract against docking.
   - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz
-    sha256: c816c20e8c75f3e15ae867350e79925502d1a6a85938bb1a73b8927e5f31f9cb
+    sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73
     target_directory: imgui-docking
 
 build:
@@ -54,7 +54,11 @@ outputs:
       host:
         - assimp
         - if: linux and target_platform != "linux-ppc64le"
+          then: libegl-devel
+        - if: linux and target_platform != "linux-ppc64le"
           then: libgl-devel
+        - if: linux and target_platform != "linux-ppc64le"
+          then: libgles-devel
         - if: linux and target_platform != "linux-ppc64le"
           then: libxcb
         - libpng
@@ -68,6 +72,10 @@ outputs:
           then: xorg-xorgproto
         - zlib
         - zstd
+      ignore_run_exports:
+        from_package:
+          - if: linux and target_platform != "linux-ppc64le"
+            then: libgles-devel
 
   - package:
       name: filament
@@ -104,6 +112,33 @@ outputs:
         - Library/lib/geometry.lib
         - Library/lib/utils.lib
     requirements:
+      # Staging requirements are not inherited once an output adds requirements.
+      build:
+        - ${{ compiler('c') }}
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+        - cmake
+        - ninja
+        - python ${{ python }}.*
+      host:
+        - assimp
+        - if: linux and target_platform != "linux-ppc64le"
+          then: libegl-devel
+        - if: linux and target_platform != "linux-ppc64le"
+          then: libgl-devel
+        - if: linux and target_platform != "linux-ppc64le"
+          then: libgles-devel
+        - if: linux and target_platform != "linux-ppc64le"
+          then: libxcb
+        - libpng
+        - if: target_platform in ("linux-64", "osx-64")
+          then: meshoptimizer
+        - if: linux and target_platform != "linux-ppc64le"
+          then: xorg-libx11
+        - if: linux and target_platform != "linux-ppc64le"
+          then: xorg-xorgproto
+        - zlib
+        - zstd
       run:
         - if: target_platform in ("linux-64", "osx-64")
           then: meshoptimizer
@@ -111,6 +146,10 @@ outputs:
         - zstd
       run_exports:
         - ${{ pin_subpackage('filament', upper_bound='x.x') }}
+      ignore_run_exports:
+        from_package:
+          - if: linux and target_platform != "linux-ppc64le"
+            then: libgles-devel
     tests:
       - files:
           recipe:
@@ -161,6 +200,34 @@ outputs:
           recipe:
             - bakedColor.mat
             - test-cmake
+        requirements:
+          run:
+            - ${{ compiler('cxx') }}
+            - ${{ stdlib('c') }}
+            - cmake
+            - imgui ==${{ imgui_version }}
+            - if: target_platform == "linux-64"
+              then: libvulkan-loader
+            - if: target_platform == "linux-64"
+              then: mesa-lavapipe
+            - ninja
+            - if: target_platform == "linux-64"
+              then: xorg-libx11
+            - if: target_platform == "linux-64"
+              then: xorg-xorgproto
+        script:
+          - cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          - cmake --build test-cmake-mainline-build --verbose
+          - if: target_platform == "linux-64"
+            then: VK_DRIVER_FILES="$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json" xvfb-run -a -s "-screen 0 640x480x24 -ac -extension GLX +extension RANDR" ./test-cmake-mainline-build/hello_world
+          - if: unix and target_platform != "linux-64"
+            then: ./test-cmake-mainline-build/hello_world
+          - if: win
+            then: .\test-cmake-mainline-build\hello_world.exe
+      - files:
+          recipe:
+            - bakedColor.mat
+            - test-cmake
           source:
             - imgui-docking
         requirements:
@@ -178,14 +245,14 @@ outputs:
             - if: target_platform == "linux-64"
               then: xorg-xorgproto
         script:
-          - cmake -S test-cmake -B test-cmake-build -G Ninja -DCMAKE_BUILD_TYPE=Release
-          - cmake --build test-cmake-build --verbose
+          - cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON
+          - cmake --build test-cmake-docking-build --verbose
           - if: target_platform == "linux-64"
-            then: VK_DRIVER_FILES="$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json" xvfb-run -a -s "-screen 0 640x480x24 -ac -extension GLX +extension RANDR" ./test-cmake-build/hello_world
+            then: VK_DRIVER_FILES="$PREFIX/share/vulkan/icd.d/lvp_icd.x86_64.json" xvfb-run -a -s "-screen 0 640x480x24 -ac -extension GLX +extension RANDR" ./test-cmake-docking-build/hello_world
           - if: unix and target_platform != "linux-64"
-            then: ./test-cmake-build/hello_world
+            then: ./test-cmake-docking-build/hello_world
           - if: win
-            then: .\test-cmake-build\hello_world.exe
+            then: .\test-cmake-docking-build\hello_world.exe
 
 about:
   summary: Real-time physically based rendering engine
@@ -195,7 +262,7 @@ about:
     command line tools and a constrained shared C++ development surface for
     downstream consumers.
     The optional filament-filagui-static output is built against Dear ImGui
-    1.92.5 docking headers and leaves the final ImGui linkage to consumers.
+    1.92.9 docking headers and leaves the final ImGui linkage to consumers.
   license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib
   license_file:
     - LICENSE

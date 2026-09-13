@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <memory>
 
-#ifndef IMGUI_HAS_DOCK
+#if defined(FILAGUI_TEST_DOCKING) && !defined(IMGUI_HAS_DOCK)
 #error "The consumer-provided ImGui must be the docking branch for this test"
 #endif
 
@@ -125,10 +125,14 @@ int main() {
     {
         IMGUI_CHECKVERSION();
         filagui::ImGuiHelper gui(engine, guiView, utils::Path());
+#ifdef FILAGUI_TEST_DOCKING
         ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+#endif
         gui.setDisplaySize(width, height);
         gui.render(1.0f / 60.0f, [](Engine*, View*) {
+#ifdef FILAGUI_TEST_DOCKING
             ImGui::DockSpaceOverViewport();
+#endif
             ImGui::SetNextWindowPos({0.0f, 0.0f});
             ImGui::SetNextWindowSize({64.0f, 64.0f});
             ImGui::PushStyleColor(ImGuiCol_WindowBg, {1.0f, 0.0f, 0.0f, 1.0f});
