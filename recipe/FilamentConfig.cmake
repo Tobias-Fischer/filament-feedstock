@@ -1,6 +1,7 @@
 get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
 
 include(CMakeFindDependencyMacro)
+find_dependency(imgui CONFIG REQUIRED)
 find_dependency(tsl-robin-map CONFIG REQUIRED)
 
 if(WIN32)
@@ -65,6 +66,7 @@ endif()
 _filament_import_library(utils utils)
 _filament_import_library(filabridge filabridge)
 _filament_import_library(filaflat filaflat)
+_filament_import_library(filagui filagui)
 _filament_import_library(backend backend)
 _filament_import_library(geometry geometry)
 _filament_import_library(filament filament)
@@ -83,6 +85,9 @@ if(Filament_FOUND)
   )
   set_target_properties(Filament::filaflat PROPERTIES
     INTERFACE_LINK_LIBRARIES "Filament::filabridge;Filament::utils"
+  )
+  set_target_properties(Filament::filagui PROPERTIES
+    INTERFACE_LINK_LIBRARIES "imgui::imgui;Filament::filament"
   )
   set_target_properties(Filament::backend PROPERTIES
     INTERFACE_LINK_LIBRARIES "${_filament_backend_dependencies}"

@@ -12,7 +12,7 @@ Subject: [PATCH] Use selected system libraries
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -919,7 +919,16 @@ add_subdirectory(${FILAMENT}/shaders)
+@@ -919,7 +919,20 @@ add_subdirectory(${FILAMENT}/shaders)
  add_subdirectory(${EXTERNAL}/abseil/tnt)
  # Add zstd before basisu to force it to use the external zstd target,
  # preventing a duplicate symbol conflict with its bundled version.
@@ -28,9 +28,14 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 +    endif()
 +endif()
  add_subdirectory(${EXTERNAL}/civetweb/tnt)
- add_subdirectory(${EXTERNAL}/imgui/tnt)
+-add_subdirectory(${EXTERNAL}/imgui/tnt)
++find_package(imgui CONFIG REQUIRED)
++if (NOT TARGET imgui)
++    add_library(imgui INTERFACE IMPORTED)
++    target_link_libraries(imgui INTERFACE imgui::imgui)
++endif()
  add_subdirectory(${EXTERNAL}/robin-map/tnt)
-@@ -927,6 +936,15 @@ add_subdirectory(${EXTERNAL}/robin-map/tnt)
+@@ -927,6 +940,15 @@ add_subdirectory(${EXTERNAL}/robin-map/tnt)
  add_subdirectory(${EXTERNAL}/smol-v/tnt)
  add_subdirectory(${EXTERNAL}/benchmark/tnt)
 -add_subdirectory(${EXTERNAL}/meshoptimizer/tnt)
@@ -47,7 +52,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
  add_subdirectory(${EXTERNAL}/mikktspace)
  add_subdirectory(${EXTERNAL}/cgltf/tnt)
  add_subdirectory(${EXTERNAL}/draco/tnt)
-@@ -1001,15 +1010,27 @@ if (IS_HOST_PLATFORM)
+@@ -1001,15 +1014,27 @@ if (IS_HOST_PLATFORM)
      if (FILAMENT_SUPPORTS_OPENGL)
          add_subdirectory(${LIBRARIES}/bluegl)
      endif()

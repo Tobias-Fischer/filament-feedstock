@@ -22,7 +22,7 @@ cmake %CMAKE_ARGS% -G Ninja -S . -B build ^
 if errorlevel 1 exit /b 1
 
 cmake --build build --parallel %CPU_COUNT% --target ^
-  backend bluegl bluevk cmgen diffimg filabridge filaflat filament filamesh ^
+  backend bluegl bluevk cmgen diffimg filabridge filaflat filagui filament filamesh ^
   geometry glslminifier matc matinfo mipgen normal-blending resgen ^
   roughness-prefilter shaders smol-v specgen specular-color uberz utils
 if errorlevel 1 exit /b 1
@@ -41,6 +41,7 @@ call :install_library "build\filament" filament || exit /b 1
 call :install_library "build\filament\backend" backend || exit /b 1
 call :install_library "build\libs\filabridge" filabridge || exit /b 1
 call :install_library "build\libs\filaflat" filaflat || exit /b 1
+call :install_library "build\libs\filagui" filagui || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
 
@@ -48,6 +49,7 @@ xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1
 xcopy /E /I /Y "libs\filabridge\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "libs\filaflat\include\filaflat" "%LIBRARY_INC%\filaflat" || exit /b 1
+xcopy /E /I /Y "libs\filagui\include\filagui" "%LIBRARY_INC%\filagui" || exit /b 1
 xcopy /E /I /Y "libs\geometry\include\geometry" "%LIBRARY_INC%\geometry" || exit /b 1
 xcopy /E /I /Y "libs\math\include\math" "%LIBRARY_INC%\math" || exit /b 1
 xcopy /E /I /Y "libs\utils\include\utils" "%LIBRARY_INC%\utils" || exit /b 1

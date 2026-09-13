@@ -28,6 +28,7 @@ build_targets=(
   diffimg
   filabridge
   filaflat
+  filagui
   filament
   filamesh
   geometry
@@ -106,6 +107,7 @@ for header_dir in \
   filament/backend/include/backend \
   libs/filabridge/include/filament \
   libs/filaflat/include/filaflat \
+  libs/filagui/include/filagui \
   libs/geometry/include/geometry \
   libs/math/include/math \
   libs/utils/include/utils; do
@@ -118,6 +120,7 @@ filament_shared_libraries=(
   libs/bluevk/libbluevk
   libs/filabridge/libfilabridge
   libs/filaflat/libfilaflat
+  libs/filagui/libfilagui
   libs/geometry/libgeometry
   libs/utils/libutils
 )

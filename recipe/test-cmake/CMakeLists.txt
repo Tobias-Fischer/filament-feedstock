@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Filament CONFIG REQUIRED)
 
 add_executable(hello_world hello_world.cpp)
-target_link_libraries(hello_world PRIVATE Filament::filament)
+target_link_libraries(hello_world PRIVATE Filament::filagui)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
   find_package(X11 REQUIRED)

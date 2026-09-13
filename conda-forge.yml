@@ -11,3 +11,6 @@ provider:
   osx_arm64: default
 bot:
   automerge: true
+  version_updates:
+    sources:
+      - githubreleases

@@ -26,6 +26,7 @@ required_shared_libraries = (
     "libbackend",
     "libfilabridge",
     "libfilaflat",
+    "libfilagui",
     "libfilament",
     "libgeometry",
     "libutils",
@@ -62,6 +63,7 @@ else:
 
 for required_path in (
     f"{package_root}include/filament/Engine.h",
+    f"{package_root}include/filagui/ImGuiHelper.h",
     f"{package_root}include/backend/DriverEnums.h",
     f"{package_root}lib/cmake/Filament/FilamentConfig.cmake",
     f"{package_root}bin/matc{executable_suffix}",
