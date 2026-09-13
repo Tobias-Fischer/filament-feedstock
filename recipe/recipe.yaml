@@ -206,6 +206,7 @@ outputs:
             - ${{ stdlib('c') }}
             - cmake
             - imgui ==${{ imgui_version }}
+            - libvulkan-headers
             - if: target_platform == "linux-64"
               then: libvulkan-loader
             - if: target_platform == "linux-64"
