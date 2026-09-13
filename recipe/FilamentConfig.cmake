@@ -117,6 +117,8 @@ if(Filament_FOUND)
     INTERFACE_LINK_LIBRARIES "Filament::filabridge;Filament::utils"
   )
   if(TARGET Filament::filagui)
+    # Filagui leaves Dear ImGui unresolved so consumers can link one compatible
+    # mainline or docking implementation themselves.
     set_target_properties(Filament::filagui PROPERTIES
       INTERFACE_LINK_LIBRARIES "Filament::filament"
     )

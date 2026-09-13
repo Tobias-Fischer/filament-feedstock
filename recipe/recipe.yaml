@@ -189,6 +189,10 @@ outputs:
     requirements:
       run:
         - ${{ pin_subpackage('filament', exact=True) }}
+      # Do not install ImGui: applications may link either mainline or docking.
+      # If conda-forge's mainline package is present, keep its ABI version aligned.
+      run_constraints:
+        - imgui ==${{ imgui_version }}
     tests:
       - package_contents:
           include:
@@ -265,7 +269,9 @@ about:
     command line tools and a constrained shared C++ development surface for
     downstream consumers.
     The optional filament-filagui-static output is built against Dear ImGui
-    1.92.9 docking headers and leaves the final ImGui linkage to consumers.
+    ${{ imgui_version }} docking headers but does not package or link an ImGui
+    implementation. Consumers must link exactly one matching implementation:
+    conda-forge's mainline imgui package or their own docking build.
   license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT AND Zlib
   license_file:
     - LICENSE
