@@ -11,6 +11,7 @@ cmake %CMAKE_ARGS% -G Ninja -S . -B build ^
   -DDIST_DIR=. ^
   -DFILAMENT_BUILD_TESTING=OFF ^
   -DFILAMENT_ENABLE_LTO=OFF ^
+  -DFILAMENT_IMGUI_SOURCE_DIR="%SRC_DIR%/imgui-docking" ^
   -DFILAMENT_USE_EXTERNAL_ABSL=ON ^
   -DFILAMENT_SKIP_SAMPLES=ON ^
   -DFILAMENT_SKIP_SDL2=ON ^
@@ -41,9 +42,10 @@ call :install_library "build\filament" filament || exit /b 1
 call :install_library "build\filament\backend" backend || exit /b 1
 call :install_library "build\libs\filabridge" filabridge || exit /b 1
 call :install_library "build\libs\filaflat" filaflat || exit /b 1
-call :install_library "build\libs\filagui" filagui || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
+if not exist "build\libs\filagui\filagui.lib" exit /b 1
+copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 1
 
 xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1

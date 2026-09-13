@@ -18,6 +18,10 @@
 #include <cstdint>
 #include <memory>
 
+#ifndef IMGUI_HAS_DOCK
+#error "The consumer-provided ImGui must be the docking branch for this test"
+#endif
+
 #ifdef FILAMENT_TEST_X11
 #include <X11/Xlib.h>
 #endif
@@ -119,9 +123,12 @@ int main() {
     std::array<uint8_t, width * height * 4> guiPixels{};
 #endif
     {
+        IMGUI_CHECKVERSION();
         filagui::ImGuiHelper gui(engine, guiView, utils::Path());
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         gui.setDisplaySize(width, height);
         gui.render(1.0f / 60.0f, [](Engine*, View*) {
+            ImGui::DockSpaceOverViewport();
             ImGui::SetNextWindowPos({0.0f, 0.0f});
             ImGui::SetNextWindowSize({64.0f, 64.0f});
             ImGui::PushStyleColor(ImGuiCol_WindowBg, {1.0f, 0.0f, 0.0f, 1.0f});
