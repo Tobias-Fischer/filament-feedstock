@@ -10,7 +10,12 @@
 #include <utils/LruCache.h>
 
 #include <array>
+#include <cstdint>
 #include <memory>
+
+#ifdef FILAMENT_TEST_X11
+#include <X11/Xlib.h>
+#endif
 
 int main() {
     using namespace filament;
@@ -42,12 +47,39 @@ int main() {
     std::array<filament::math::short4, 3> tangents;
     orientation->getQuats(tangents.data(), tangents.size());
 
-    Engine* engine = Engine::create(Engine::Backend::NOOP);
+#ifdef FILAMENT_TEST_X11
+    Display* display = XOpenDisplay(nullptr);
+    if (display == nullptr) {
+        return 1;
+    }
+    Window window = XCreateSimpleWindow(
+            display, DefaultRootWindow(display), 0, 0, 64, 64, 0, 0, 0);
+    if (window == 0) {
+        XCloseDisplay(display);
+        return 1;
+    }
+    XMapWindow(display, window);
+    XSync(display, False);
+    constexpr Engine::Backend backend = Engine::Backend::VULKAN;
+#else
+    constexpr Engine::Backend backend = Engine::Backend::NOOP;
+#endif
+
+    Engine* engine = Engine::create(backend);
     if (engine == nullptr) {
+#ifdef FILAMENT_TEST_X11
+        XDestroyWindow(display, window);
+        XCloseDisplay(display);
+#endif
         return 1;
     }
 
+#ifdef FILAMENT_TEST_X11
+    SwapChain* swapChain = engine->createSwapChain(
+            reinterpret_cast<void*>(static_cast<std::uintptr_t>(window)));
+#else
     SwapChain* swapChain = engine->createSwapChain(16, 16);
+#endif
     Renderer* renderer = engine->createRenderer();
     Scene* scene = engine->createScene();
     Skybox* skybox = Skybox::Builder()
@@ -81,6 +113,11 @@ int main() {
     engine->destroy(renderer);
     engine->destroy(swapChain);
     Engine::destroy(&engine);
+
+#ifdef FILAMENT_TEST_X11
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
+#endif
 
     return renderedFrame ? 0 : 2;
 }
