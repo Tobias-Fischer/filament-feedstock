@@ -33,6 +33,7 @@ required_shared_libraries = (
     "libfilabridge",
     "libfilaflat",
     "libfilament",
+    "libfilameshio",
     "libgeometry",
     "libutils",
 )
@@ -68,9 +69,11 @@ else:
 
 for required_path in (
     f"{package_root}include/filament/Engine.h",
+    f"{package_root}include/filameshio/MeshReader.h",
     f"{package_root}include/backend/DriverEnums.h",
     f"{package_root}lib/cmake/Filament/FilamentConfig.cmake",
     f"{package_root}bin/matc{executable_suffix}",
+    f"{package_root}bin/filamesh{executable_suffix}",
 ):
     if required_path not in package_files:
         fail(f"filament package does not ship {required_path}")

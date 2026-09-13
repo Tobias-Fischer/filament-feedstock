@@ -108,6 +108,7 @@ for header_dir in \
   filament/backend/include/backend \
   libs/filabridge/include/filament \
   libs/filaflat/include/filaflat \
+  libs/filameshio/include/filameshio \
   libs/filagui/include/filagui \
   libs/geometry/include/geometry \
   libs/math/include/math \
@@ -121,6 +122,7 @@ filament_shared_libraries=(
   libs/bluevk/libbluevk
   libs/filabridge/libfilabridge
   libs/filaflat/libfilaflat
+  libs/filameshio/libfilameshio
   libs/geometry/libgeometry
   libs/utils/libutils
 )
