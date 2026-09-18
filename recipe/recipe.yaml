@@ -17,8 +17,6 @@ source:
       # Remove when upstream guards the macOS 12-only enum values, or when the
       # conda-forge build moves to a macOS 12+ SDK.
       - patches/0001-guard-newer-metal-command-buffer-errors.patch
-      # Backport google/filament#10299; remove when upstream lands an equivalent fix.
-      - patches/0002-fix-neon-mask-types.patch
       # Remove when upstream supports selecting these system dependencies.
       - patches/0003-use-system-libpng-zlib.patch
       # Remove when upstream supports shared-library builds (google/filament#1075).
