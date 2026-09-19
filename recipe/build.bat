@@ -1,7 +1,7 @@
 @echo on
 setlocal EnableExtensions
 
-set "PATH=%CD%\build\filament;%CD%\build\filament\backend;%CD%\build\libs\filabridge;%CD%\build\libs\filaflat;%CD%\build\libs\geometry;%CD%\build\libs\utils;%PATH%"
+set "PATH=%CD%\build\filament;%CD%\build\filament\backend;%CD%\build\libs\filabridge;%CD%\build\libs\filaflat;%CD%\build\libs\geometry;%CD%\build\libs\image;%CD%\build\libs\ktxreader;%CD%\build\libs\utils;%PATH%"
 
 cmake %CMAKE_ARGS% -G Ninja -S . -B build ^
   -DCMAKE_BUILD_TYPE=Release ^
