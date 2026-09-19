@@ -33,7 +33,7 @@ source:
     target_directory: imgui-docking
 
 build:
-  number: 0
+  number: 1
 
 outputs:
   - staging:
@@ -260,6 +260,57 @@ outputs:
           - if: win
             then: .\test-cmake-docking-build\hello_world.exe
 
+  - package:
+      name: filament-ktxreader-static
+    inherit:
+      from: filament-build
+      run_exports: false
+    build:
+      files:
+        - include/image
+        - include/ktxreader
+        - lib/libimage.a
+        - lib/libktxreader.a
+        - Library/include/image
+        - Library/include/ktxreader
+        - Library/lib/image.lib
+        - Library/lib/ktxreader.lib
+    requirements:
+      run:
+        - ${{ pin_subpackage('filament', exact=True) }}
+    tests:
+      - package_contents:
+          include:
+            - image/Ktx1Bundle.h
+            - ktxreader/Ktx1Reader.h
+          files:
+            - if: win
+              then:
+                - Library/lib/image.lib
+                - Library/lib/ktxreader.lib
+            - if: unix
+              then:
+                - lib/libimage.a
+                - lib/libktxreader.a
+      - files:
+          recipe:
+            - test-cmake-ktxreader
+        requirements:
+          run:
+            - ${{ compiler('cxx') }}
+            - ${{ stdlib('c') }}
+            - cmake
+            - ninja
+        script:
+          # CPU-only: no Engine, window or GPU driver is needed. Linking this
+          # also proves Ktx1Reader resolves without the unpackaged Basis
+          # Universal transcoder.
+          - cmake -S test-cmake-ktxreader -B test-cmake-ktxreader-build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          - cmake --build test-cmake-ktxreader-build --verbose
+          - if: unix
+            then: ./test-cmake-ktxreader-build/ktx1_roundtrip
+            else: .\test-cmake-ktxreader-build\ktx1_roundtrip.exe
+
 about:
   summary: Real-time physically based rendering engine
   description: |
@@ -267,6 +318,10 @@ about:
     iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
     command line tools and a constrained shared C++ development surface for
     downstream consumers.
+    The optional filament-ktxreader-static output packages the image and
+    ktxreader static libraries. Ktx1 is fully usable; Ktx2Reader additionally
+    requires Filament's vendored Basis Universal transcoder, which is not
+    packaged, so those symbols are left for the consumer to resolve.
     The optional filament-filagui-static output is built against Dear ImGui
     ${{ imgui_version }} docking headers but does not package or link an ImGui
     implementation. Consumers must link exactly one matching implementation:

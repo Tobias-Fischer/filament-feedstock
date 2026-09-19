@@ -102,6 +102,16 @@ if(EXISTS "${_filament_filagui_library}")
   _filament_import_static_library(filagui filagui)
 endif()
 
+if(WIN32)
+  set(_filament_ktxreader_library "${PACKAGE_PREFIX_DIR}/lib/ktxreader.lib")
+else()
+  set(_filament_ktxreader_library "${PACKAGE_PREFIX_DIR}/lib/libktxreader.a")
+endif()
+if(EXISTS "${_filament_ktxreader_library}")
+  _filament_import_static_library(image image)
+  _filament_import_static_library(ktxreader ktxreader)
+endif()
+
 if(Filament_FOUND)
   set_target_properties(Filament::utils PROPERTIES
     INTERFACE_LINK_LIBRARIES "tsl::robin_map"
@@ -125,6 +135,17 @@ if(Filament_FOUND)
     # mainline or docking implementation themselves.
     set_target_properties(Filament::filagui PROPERTIES
       INTERFACE_LINK_LIBRARIES "Filament::filament"
+    )
+  endif()
+  if(TARGET Filament::ktxreader)
+    set_target_properties(Filament::image PROPERTIES
+      INTERFACE_LINK_LIBRARIES "Filament::utils"
+    )
+    # Ktx1Reader is usable as packaged. Ktx2Reader additionally needs Filament's
+    # vendored Basis Universal transcoder, which is not packaged, so those
+    # symbols stay unresolved for consumers that require KTX2 support.
+    set_target_properties(Filament::ktxreader PROPERTIES
+      INTERFACE_LINK_LIBRARIES "Filament::image;Filament::filament;Filament::utils"
     )
   endif()
   set_target_properties(Filament::backend PROPERTIES

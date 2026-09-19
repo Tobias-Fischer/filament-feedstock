@@ -24,7 +24,7 @@ if errorlevel 1 exit /b 1
 
 cmake --build build --parallel %CPU_COUNT% --target ^
   backend bluegl bluevk cmgen diffimg filabridge filaflat filagui filament filamesh ^
-  geometry glslminifier matc matinfo mipgen normal-blending resgen ^
+  geometry glslminifier image ktxreader matc matinfo mipgen normal-blending resgen ^
   roughness-prefilter shaders smol-v specgen specular-color uberz utils
 if errorlevel 1 exit /b 1
 
@@ -45,8 +45,12 @@ call :install_library "build\libs\filaflat" filaflat || exit /b 1
 call :install_library "build\libs\filameshio" filameshio || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
-if not exist "build\libs\filagui\filagui.lib" exit /b 1
-copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 1
+rem Static libraries ship in separate outputs so the main filament package
+rem stays free of static archives; see check_package_payload.py.
+for %%S in (filagui image ktxreader) do (
+  if not exist "build\libs\%%S\%%S.lib" exit /b 1
+  copy /Y "build\libs\%%S\%%S.lib" "%LIBRARY_LIB%\%%S.lib" || exit /b 1
+)
 
 xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1
@@ -55,6 +59,8 @@ xcopy /E /I /Y "libs\filaflat\include\filaflat" "%LIBRARY_INC%\filaflat" || exit
 xcopy /E /I /Y "libs\filameshio\include\filameshio" "%LIBRARY_INC%\filameshio" || exit /b 1
 xcopy /E /I /Y "libs\filagui\include\filagui" "%LIBRARY_INC%\filagui" || exit /b 1
 xcopy /E /I /Y "libs\geometry\include\geometry" "%LIBRARY_INC%\geometry" || exit /b 1
+xcopy /E /I /Y "libs\image\include\image" "%LIBRARY_INC%\image" || exit /b 1
+xcopy /E /I /Y "libs\ktxreader\include\ktxreader" "%LIBRARY_INC%\ktxreader" || exit /b 1
 xcopy /E /I /Y "libs\math\include\math" "%LIBRARY_INC%\math" || exit /b 1
 xcopy /E /I /Y "libs\utils\include\utils" "%LIBRARY_INC%\utils" || exit /b 1
 

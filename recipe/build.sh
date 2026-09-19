@@ -34,6 +34,8 @@ build_targets=(
   filamesh
   geometry
   glslminifier
+  image
+  ktxreader
   matc
   matinfo
   matedit
@@ -111,6 +113,8 @@ for header_dir in \
   libs/filameshio/include/filameshio \
   libs/filagui/include/filagui \
   libs/geometry/include/geometry \
+  libs/image/include/image \
+  libs/ktxreader/include/ktxreader \
   libs/math/include/math \
   libs/utils/include/utils; do
   cp -R "${header_dir}" "${PREFIX}/include/"
@@ -143,8 +147,19 @@ for shared_library in "${filament_shared_libraries[@]}"; do
   install -m 755 "${source_path}" "${PREFIX}/lib/$(basename "${source_path}")"
 done
 
-test -f build/libs/filagui/libfilagui.a
-install -m 644 build/libs/filagui/libfilagui.a "${PREFIX}/lib/libfilagui.a"
+# Static libraries. These are split out into separate outputs so the main
+# filament package stays free of static archives; see check_package_payload.py.
+filament_static_libraries=(
+  libs/filagui/libfilagui
+  libs/image/libimage
+  libs/ktxreader/libktxreader
+)
+
+for static_library in "${filament_static_libraries[@]}"; do
+  source_path="build/${static_library}.a"
+  test -f "${source_path}"
+  install -m 644 "${source_path}" "${PREFIX}/lib/$(basename "${source_path}")"
+done
 
 if [[ "${target_platform}" == osx-* ]]; then
   for dylib in "${PREFIX}"/lib/lib*.dylib; do
