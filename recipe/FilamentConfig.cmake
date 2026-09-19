@@ -32,7 +32,7 @@ function(_filament_import_library target_name library_name)
     add_library(Filament::${target_name} SHARED IMPORTED)
     set_target_properties(Filament::${target_name} PROPERTIES
       IMPORTED_LOCATION "${_filament_library}"
-      INTERFACE_COMPILE_FEATURES cxx_std_17
+      INTERFACE_COMPILE_FEATURES cxx_std_20
       INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
     )
     if(WIN32)
@@ -66,7 +66,7 @@ function(_filament_import_static_library target_name library_name)
     add_library(Filament::${target_name} STATIC IMPORTED)
     set_target_properties(Filament::${target_name} PROPERTIES
       IMPORTED_LOCATION "${_filament_library}"
-      INTERFACE_COMPILE_FEATURES cxx_std_17
+      INTERFACE_COMPILE_FEATURES cxx_std_20
       INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
     )
   endif()
