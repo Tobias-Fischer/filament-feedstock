@@ -91,6 +91,8 @@ _filament_import_library(filaflat filaflat)
 _filament_import_library(backend backend)
 _filament_import_library(filameshio filameshio)
 _filament_import_library(geometry geometry)
+_filament_import_library(image image)
+_filament_import_library(ktxreader ktxreader)
 _filament_import_library(filament filament)
 
 if(WIN32)
@@ -100,16 +102,6 @@ else()
 endif()
 if(EXISTS "${_filament_filagui_library}")
   _filament_import_static_library(filagui filagui)
-endif()
-
-if(WIN32)
-  set(_filament_ktxreader_library "${PACKAGE_PREFIX_DIR}/lib/ktxreader.lib")
-else()
-  set(_filament_ktxreader_library "${PACKAGE_PREFIX_DIR}/lib/libktxreader.a")
-endif()
-if(EXISTS "${_filament_ktxreader_library}")
-  _filament_import_static_library(image image)
-  _filament_import_static_library(ktxreader ktxreader)
 endif()
 
 if(Filament_FOUND)
@@ -137,17 +129,13 @@ if(Filament_FOUND)
       INTERFACE_LINK_LIBRARIES "Filament::filament"
     )
   endif()
-  if(TARGET Filament::ktxreader)
-    set_target_properties(Filament::image PROPERTIES
-      INTERFACE_LINK_LIBRARIES "Filament::utils"
-    )
-    # Ktx1Reader is usable as packaged. Ktx2Reader additionally needs Filament's
-    # vendored Basis Universal transcoder, which is not packaged, so those
-    # symbols stay unresolved for consumers that require KTX2 support.
-    set_target_properties(Filament::ktxreader PROPERTIES
-      INTERFACE_LINK_LIBRARIES "Filament::image;Filament::filament;Filament::utils"
-    )
-  endif()
+  set_target_properties(Filament::image PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Filament::utils"
+  )
+  # Filament's vendored Basis Universal transcoder is linked into ktxreader.
+  set_target_properties(Filament::ktxreader PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Filament::image;Filament::filament;Filament::utils"
+  )
   set_target_properties(Filament::backend PROPERTIES
     INTERFACE_LINK_LIBRARIES "${_filament_backend_dependencies}"
   )

@@ -44,13 +44,11 @@ call :install_library "build\libs\filabridge" filabridge || exit /b 1
 call :install_library "build\libs\filaflat" filaflat || exit /b 1
 call :install_library "build\libs\filameshio" filameshio || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
+call :install_library "build\libs\image" image || exit /b 1
+call :install_library "build\libs\ktxreader" ktxreader || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
-rem Static libraries ship in separate outputs so the main filament package
-rem stays free of static archives; see check_package_payload.py.
-for %%S in (filagui image ktxreader) do (
-  if not exist "build\libs\%%S\%%S.lib" exit /b 1
-  copy /Y "build\libs\%%S\%%S.lib" "%LIBRARY_LIB%\%%S.lib" || exit /b 1
-)
+if not exist "build\libs\filagui\filagui.lib" exit /b 1
+copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 1
 
 xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1

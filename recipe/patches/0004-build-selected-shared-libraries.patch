@@ -195,3 +195,45 @@
  
      /**
       * Returns a canonical copy of the specified pathname by removing
+--- a/libs/image/CMakeLists.txt
++++ b/libs/image/CMakeLists.txt
+@@ -27,13 +27,17 @@
+ # ==================================================================================================
+ include_directories(${PUBLIC_HDR_DIR})
+ 
+-add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
++add_library(${TARGET} SHARED ${PUBLIC_HDRS} ${SRCS})
+ 
+ target_link_libraries(${TARGET} PUBLIC math utils)
+ 
+ target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+ set_target_properties(${TARGET} PROPERTIES FOLDER Libs)
+ 
++if (NOT WIN32)
++    target_compile_options(${TARGET} PRIVATE -fvisibility=default)
++endif()
++
+ # ==================================================================================================
+ # Compiler flags
+ # ==================================================================================================
+--- a/libs/ktxreader/CMakeLists.txt
++++ b/libs/ktxreader/CMakeLists.txt
+@@ -22,13 +22,17 @@
+ # ==================================================================================================
+ include_directories(${PUBLIC_HDR_DIR})
+ 
+-add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
++add_library(${TARGET} SHARED ${PUBLIC_HDRS} ${SRCS})
+ 
+ target_link_libraries(${TARGET} PUBLIC utils image filament basis_transcoder)
+ 
+ target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+ set_target_properties(${TARGET} PROPERTIES FOLDER Libs)
+ 
++if (NOT WIN32)
++    target_compile_options(${TARGET} PRIVATE -fvisibility=default)
++endif()
++
+ # ==================================================================================================
+ # Compiler flags
+ # ==================================================================================================
