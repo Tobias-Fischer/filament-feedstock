@@ -49,6 +49,9 @@ call :install_library "build\libs\ktxreader" ktxreader || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
 if not exist "build\libs\filagui\filagui.lib" exit /b 1
 copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 1
+rem BlueGL stays static on Windows; ship it for consumers that call into it.
+if not exist "build\libs\bluegl\bluegl.lib" exit /b 1
+copy /Y "build\libs\bluegl\bluegl.lib" "%LIBRARY_LIB%\bluegl.lib" || exit /b 1
 
 xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1

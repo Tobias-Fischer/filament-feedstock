@@ -83,9 +83,10 @@ for required_path in (
     if required_path not in package_files:
         fail(f"filament package does not ship {required_path}")
 
-for forbidden_path in (
+for forbidden_path in (x for x in (
     f"{package_root}include/filagui/ImGuiHelper.h",
     f"{package_root}lib/filagui.lib" if sys.platform == "win32" else "lib/libfilagui.a",
+    f"{package_root}lib/bluegl.lib" if sys.platform == "win32" else None,
     f"{package_root}bin/basisu{executable_suffix}",
     "lib/libabseil.a",
     "lib/libbasis_transcoder.a",
@@ -96,7 +97,7 @@ for forbidden_path in (
     "lib/libperfetto.a",
     "lib/libsmol-v.a",
     "lib/libstb.a",
-):
+) if x is not None):
     if forbidden_path in package_files:
         fail(f"filament package ships vendored payload: {forbidden_path}")
 

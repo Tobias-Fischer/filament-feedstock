@@ -75,6 +75,18 @@ endfunction()
 if(WIN32)
   # The generated GL/Vulkan loaders are linked statically into backend.dll.
   set(_filament_backend_dependencies "Filament::utils")
+  # BlueGL stays static on Windows, so it is not part of backend's link
+  # interface. filament-bluegl-static ships it for consumers that call into
+  # BlueGL directly; its opengl32/gdi32 dependencies are PRIVATE in the
+  # upstream target and so do not survive the archive.
+  if(EXISTS "${PACKAGE_PREFIX_DIR}/lib/bluegl.lib")
+    _filament_import_static_library(bluegl bluegl)
+    if(TARGET Filament::bluegl)
+      set_target_properties(Filament::bluegl PROPERTIES
+        INTERFACE_LINK_LIBRARIES "opengl32;gdi32"
+      )
+    endif()
+  endif()
 else()
   set(_filament_bluegl_library "${_filament_runtime_dir}/${_filament_library_prefix}bluegl${_filament_shared_suffix}")
   if(EXISTS "${_filament_bluegl_library}")
