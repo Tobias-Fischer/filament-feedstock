@@ -2,7 +2,7 @@ schema_version: 1
 
 context:
   name: filament
-  version: "1.76.1"
+  version: "1.77.0"
   imgui_version: "1.92.9"
   python: "3.12"
 
@@ -12,13 +12,11 @@ recipe:
 
 source:
   - url: https://github.com/google/filament/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: f65b5b50ef5647a190b51a37fa006985e061bcfdc87c3b9b0ea18cf7b52042aa
+    sha256: cda68596471e2446aef3484ed2cf1a6a68d5cd40019c75a23db79ebf20c2d6d2
     patches:
       # Remove when upstream guards the macOS 12-only enum values, or when the
       # conda-forge build moves to a macOS 12+ SDK.
       - patches/0001-guard-newer-metal-command-buffer-errors.patch
-      # Backport google/filament#10299; remove when upstream lands an equivalent fix.
-      - patches/0002-fix-neon-mask-types.patch
       # Remove when upstream supports selecting these system dependencies.
       - patches/0003-use-system-libpng-zlib.patch
       # Remove when upstream supports shared-library builds (google/filament#1075).
@@ -35,7 +33,7 @@ source:
     target_directory: imgui-docking
 
 build:
-  number: 2
+  number: 0
 
 outputs:
   - staging:
@@ -56,22 +54,20 @@ outputs:
       host:
         - assimp
         - if: linux and target_platform != "linux-ppc64le"
-          then: libegl-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libgl-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libgles-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libxcb
+          then:
+            - libegl-devel
+            - libgl-devel
+            - libgles-devel
+            - libxcb
         - libpng
         # Use Filament's bundled copy until conda-forge publishes meshoptimizer
         # for Windows, Apple Silicon, and Linux Arm/PPC.
         - if: target_platform in ("linux-64", "osx-64")
           then: meshoptimizer
         - if: linux and target_platform != "linux-ppc64le"
-          then: xorg-libx11
-        - if: linux and target_platform != "linux-ppc64le"
-          then: xorg-xorgproto
+          then:
+            - xorg-libx11
+            - xorg-xorgproto
         - zlib
         - zstd
       ignore_run_exports:
@@ -128,20 +124,18 @@ outputs:
       host:
         - assimp
         - if: linux and target_platform != "linux-ppc64le"
-          then: libegl-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libgl-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libgles-devel
-        - if: linux and target_platform != "linux-ppc64le"
-          then: libxcb
+          then:
+            - libegl-devel
+            - libgl-devel
+            - libgles-devel
+            - libxcb
         - libpng
         - if: target_platform in ("linux-64", "osx-64")
           then: meshoptimizer
         - if: linux and target_platform != "linux-ppc64le"
-          then: xorg-libx11
-        - if: linux and target_platform != "linux-ppc64le"
-          then: xorg-xorgproto
+          then:
+            - xorg-libx11
+            - xorg-xorgproto
         - zlib
         - zstd
       run:
@@ -179,9 +173,7 @@ outputs:
           - filamesh --help
           - if: target_platform != "linux-ppc64le"
             then: matc -a opengl -p desktop -o bakedColor.filamat bakedColor.mat
-          - if: target_platform == "linux-ppc64le"
-            then: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat
-
+            else: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat
   - package:
       name: filament-filagui-static
     inherit:
@@ -221,14 +213,14 @@ outputs:
             - imgui ==${{ imgui_version }}
             - libvulkan-headers
             - if: target_platform == "linux-64"
-              then: libvulkan-loader
-            - if: target_platform == "linux-64"
-              then: mesa-lavapipe
+              then:
+                - libvulkan-loader
+                - mesa-lavapipe
             - ninja
             - if: target_platform == "linux-64"
-              then: xorg-libx11
-            - if: target_platform == "linux-64"
-              then: xorg-xorgproto
+              then:
+                - xorg-libx11
+                - xorg-xorgproto
         script:
           - cmake -S test-cmake -B test-cmake-mainline-build -G Ninja -DCMAKE_BUILD_TYPE=Release
           - cmake --build test-cmake-mainline-build --verbose
@@ -250,14 +242,14 @@ outputs:
             - ${{ stdlib('c') }}
             - cmake
             - if: target_platform == "linux-64"
-              then: libvulkan-loader
-            - if: target_platform == "linux-64"
-              then: mesa-lavapipe
+              then:
+                - libvulkan-loader
+                - mesa-lavapipe
             - ninja
             - if: target_platform == "linux-64"
-              then: xorg-libx11
-            - if: target_platform == "linux-64"
-              then: xorg-xorgproto
+              then:
+                - xorg-libx11
+                - xorg-xorgproto
         script:
           - cmake -S test-cmake -B test-cmake-docking-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFILAGUI_TEST_DOCKING=ON
           - cmake --build test-cmake-docking-build --verbose
