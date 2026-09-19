@@ -1,3 +1,4 @@
+#include <backend/platforms/VulkanPlatform.h>
 #include <filament/Camera.h>
 #include <filament/Engine.h>
 #include <filament/IndexBuffer.h>

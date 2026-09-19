@@ -52,6 +52,7 @@ copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 
 
 xcopy /E /I /Y "filament\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "filament\backend\include\backend" "%LIBRARY_INC%\backend" || exit /b 1
+xcopy /E /I /Y "libs\bluevk\include\bluevk" "%LIBRARY_INC%\bluevk" || exit /b 1
 xcopy /E /I /Y "libs\filabridge\include\filament" "%LIBRARY_INC%\filament" || exit /b 1
 xcopy /E /I /Y "libs\filaflat\include\filaflat" "%LIBRARY_INC%\filaflat" || exit /b 1
 xcopy /E /I /Y "libs\filameshio\include\filameshio" "%LIBRARY_INC%\filameshio" || exit /b 1

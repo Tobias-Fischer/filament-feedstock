@@ -70,6 +70,7 @@ else:
     executable_suffix = ""
 
 for required_path in (
+    f"{package_root}include/bluevk/BlueVK.h",
     f"{package_root}include/filament/Engine.h",
     f"{package_root}include/filameshio/MeshReader.h",
     f"{package_root}include/image/Ktx1Bundle.h",

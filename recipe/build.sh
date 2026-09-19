@@ -108,6 +108,7 @@ done
 for header_dir in \
   filament/include/filament \
   filament/backend/include/backend \
+  libs/bluevk/include/bluevk \
   libs/filabridge/include/filament \
   libs/filaflat/include/filaflat \
   libs/filameshio/include/filameshio \

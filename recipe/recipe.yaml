@@ -33,7 +33,7 @@ source:
     target_directory: imgui-docking
 
 build:
-  number: 1
+  number: 2
 
 outputs:
   - staging:
@@ -85,6 +85,7 @@ outputs:
         - bin/*
         - docs/*
         - include/backend
+        - include/bluevk
         - include/filaflat
         - include/filament
         - include/filameshio
@@ -98,6 +99,7 @@ outputs:
         - lib/lib*.so*
         - Library/bin/*
         - Library/include/backend
+        - Library/include/bluevk
         - Library/include/filaflat
         - Library/include/filament
         - Library/include/filameshio
@@ -166,6 +168,7 @@ outputs:
             - ${{ compiler('cxx') }}
             - ${{ stdlib('c') }}
             - cmake
+            - libvulkan-headers
             - ninja
             - python ${{ python }}.*
         script:
