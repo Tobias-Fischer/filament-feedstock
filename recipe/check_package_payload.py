@@ -35,6 +35,8 @@ required_shared_libraries = (
     "libfilament",
     "libfilameshio",
     "libgeometry",
+    "libimage",
+    "libktxreader",
     "libutils",
 )
 
@@ -70,6 +72,8 @@ else:
 for required_path in (
     f"{package_root}include/filament/Engine.h",
     f"{package_root}include/filameshio/MeshReader.h",
+    f"{package_root}include/image/Ktx1Bundle.h",
+    f"{package_root}include/ktxreader/Ktx1Reader.h",
     f"{package_root}include/backend/DriverEnums.h",
     f"{package_root}lib/cmake/Filament/FilamentConfig.cmake",
     f"{package_root}bin/matc{executable_suffix}",

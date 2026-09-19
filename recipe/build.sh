@@ -34,6 +34,8 @@ build_targets=(
   filamesh
   geometry
   glslminifier
+  image
+  ktxreader
   matc
   matinfo
   matedit
@@ -111,6 +113,8 @@ for header_dir in \
   libs/filameshio/include/filameshio \
   libs/filagui/include/filagui \
   libs/geometry/include/geometry \
+  libs/image/include/image \
+  libs/ktxreader/include/ktxreader \
   libs/math/include/math \
   libs/utils/include/utils; do
   cp -R "${header_dir}" "${PREFIX}/include/"
@@ -124,6 +128,8 @@ filament_shared_libraries=(
   libs/filaflat/libfilaflat
   libs/filameshio/libfilameshio
   libs/geometry/libgeometry
+  libs/image/libimage
+  libs/ktxreader/libktxreader
   libs/utils/libutils
 )
 

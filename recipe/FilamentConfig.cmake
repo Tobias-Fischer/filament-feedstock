@@ -91,6 +91,8 @@ _filament_import_library(filaflat filaflat)
 _filament_import_library(backend backend)
 _filament_import_library(filameshio filameshio)
 _filament_import_library(geometry geometry)
+_filament_import_library(image image)
+_filament_import_library(ktxreader ktxreader)
 _filament_import_library(filament filament)
 
 if(WIN32)
@@ -127,6 +129,13 @@ if(Filament_FOUND)
       INTERFACE_LINK_LIBRARIES "Filament::filament"
     )
   endif()
+  set_target_properties(Filament::image PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Filament::utils"
+  )
+  # Filament's vendored Basis Universal transcoder is linked into ktxreader.
+  set_target_properties(Filament::ktxreader PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Filament::image;Filament::filament;Filament::utils"
+  )
   set_target_properties(Filament::backend PROPERTIES
     INTERFACE_LINK_LIBRARIES "${_filament_backend_dependencies}"
   )

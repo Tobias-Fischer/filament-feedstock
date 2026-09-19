@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Filament CONFIG REQUIRED)
 
-foreach(expected_target filament filamesh filameshio matc)
+foreach(expected_target filament filamesh filameshio image ktxreader matc)
   if(NOT TARGET Filament::${expected_target})
     message(FATAL_ERROR "Filament::${expected_target} is missing")
   endif()
@@ -26,7 +26,7 @@ add_custom_command(
 add_custom_target(generate_test_mesh ALL DEPENDS "${test_mesh}")
 
 add_executable(filament_core_consumer main.cpp)
-target_link_libraries(filament_core_consumer PRIVATE Filament::filameshio)
+target_link_libraries(filament_core_consumer PRIVATE Filament::filameshio Filament::ktxreader)
 add_dependencies(filament_core_consumer generate_test_mesh)
 
 enable_testing()

@@ -1,7 +1,7 @@
 @echo on
 setlocal EnableExtensions
 
-set "PATH=%CD%\build\filament;%CD%\build\filament\backend;%CD%\build\libs\filabridge;%CD%\build\libs\filaflat;%CD%\build\libs\geometry;%CD%\build\libs\utils;%PATH%"
+set "PATH=%CD%\build\filament;%CD%\build\filament\backend;%CD%\build\libs\filabridge;%CD%\build\libs\filaflat;%CD%\build\libs\geometry;%CD%\build\libs\image;%CD%\build\libs\ktxreader;%CD%\build\libs\utils;%PATH%"
 
 cmake %CMAKE_ARGS% -G Ninja -S . -B build ^
   -DCMAKE_BUILD_TYPE=Release ^
@@ -24,7 +24,7 @@ if errorlevel 1 exit /b 1
 
 cmake --build build --parallel %CPU_COUNT% --target ^
   backend bluegl bluevk cmgen diffimg filabridge filaflat filagui filament filamesh ^
-  geometry glslminifier matc matinfo mipgen normal-blending resgen ^
+  geometry glslminifier image ktxreader matc matinfo mipgen normal-blending resgen ^
   roughness-prefilter shaders smol-v specgen specular-color uberz utils
 if errorlevel 1 exit /b 1
 
@@ -44,6 +44,8 @@ call :install_library "build\libs\filabridge" filabridge || exit /b 1
 call :install_library "build\libs\filaflat" filaflat || exit /b 1
 call :install_library "build\libs\filameshio" filameshio || exit /b 1
 call :install_library "build\libs\geometry" geometry || exit /b 1
+call :install_library "build\libs\image" image || exit /b 1
+call :install_library "build\libs\ktxreader" ktxreader || exit /b 1
 call :install_library "build\libs\utils" utils || exit /b 1
 if not exist "build\libs\filagui\filagui.lib" exit /b 1
 copy /Y "build\libs\filagui\filagui.lib" "%LIBRARY_LIB%\filagui.lib" || exit /b 1
@@ -55,6 +57,8 @@ xcopy /E /I /Y "libs\filaflat\include\filaflat" "%LIBRARY_INC%\filaflat" || exit
 xcopy /E /I /Y "libs\filameshio\include\filameshio" "%LIBRARY_INC%\filameshio" || exit /b 1
 xcopy /E /I /Y "libs\filagui\include\filagui" "%LIBRARY_INC%\filagui" || exit /b 1
 xcopy /E /I /Y "libs\geometry\include\geometry" "%LIBRARY_INC%\geometry" || exit /b 1
+xcopy /E /I /Y "libs\image\include\image" "%LIBRARY_INC%\image" || exit /b 1
+xcopy /E /I /Y "libs\ktxreader\include\ktxreader" "%LIBRARY_INC%\ktxreader" || exit /b 1
 xcopy /E /I /Y "libs\math\include\math" "%LIBRARY_INC%\math" || exit /b 1
 xcopy /E /I /Y "libs\utils\include\utils" "%LIBRARY_INC%\utils" || exit /b 1
 

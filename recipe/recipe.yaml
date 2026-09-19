@@ -33,7 +33,7 @@ source:
     target_directory: imgui-docking
 
 build:
-  number: 0
+  number: 1
 
 outputs:
   - staging:
@@ -89,6 +89,8 @@ outputs:
         - include/filament
         - include/filameshio
         - include/geometry
+        - include/image
+        - include/ktxreader
         - include/math
         - include/utils
         - lib/cmake/Filament
@@ -100,6 +102,8 @@ outputs:
         - Library/include/filament
         - Library/include/filameshio
         - Library/include/geometry
+        - Library/include/image
+        - Library/include/ktxreader
         - Library/include/math
         - Library/include/utils
         - Library/lib/backend.lib
@@ -111,6 +115,8 @@ outputs:
         - Library/lib/filament.lib
         - Library/lib/filameshio.lib
         - Library/lib/geometry.lib
+        - Library/lib/image.lib
+        - Library/lib/ktxreader.lib
         - Library/lib/utils.lib
     requirements:
       # Staging requirements are not inherited once an output adds requirements.
@@ -267,6 +273,9 @@ about:
     iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
     command line tools and a constrained shared C++ development surface for
     downstream consumers.
+    The image and ktxreader libraries are built shared, so Filament's vendored
+    Basis Universal transcoder is linked into libktxreader rather than shipped
+    as a static archive.
     The optional filament-filagui-static output is built against Dear ImGui
     ${{ imgui_version }} docking headers but does not package or link an ImGui
     implementation. Consumers must link exactly one matching implementation:
