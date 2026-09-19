@@ -15,6 +15,9 @@ Filament is a real-time physically based rendering engine for Android,
 iOS, Windows, Linux, macOS, and WebGL2. This package provides host-side
 command line tools and a constrained shared C++ development surface for
 downstream consumers.
+The image and ktxreader libraries are built shared, so Filament's vendored
+Basis Universal transcoder is linked into libktxreader rather than shipped
+as a static archive.
 The optional filament-filagui-static output is built against Dear ImGui
 1.92.9 docking headers but does not package or link an ImGui
 implementation. Consumers must link exactly one matching implementation:
