@@ -11,14 +11,58 @@
 #include <filament/Viewport.h>
 
 #include <filameshio/MeshReader.h>
+#include <image/Ktx1Bundle.h>
+#include <ktxreader/Ktx1Reader.h>
 #include <utils/EntityManager.h>
 #include <utils/Path.h>
+
+#include <cstdint>
+#include <vector>
+
+// Round-trips a KTX1 bundle on the CPU. This needs no Engine, and linking it
+// is what proves the shared image/ktxreader libraries actually export their
+// symbols -- a file-presence check cannot catch a visibility regression.
+static bool checkKtx1RoundTrip() {
+    image::Ktx1Bundle bundle(1, 1, false);
+    bundle.info() = {
+            .endianness = 0x04030201,
+            .glType = 0x1401,          // GL_UNSIGNED_BYTE
+            .glTypeSize = 1,
+            .glFormat = 0x1907,        // GL_RGB
+            .glInternalFormat = 0x1907,
+            .glBaseInternalFormat = 0x1907,
+            .pixelWidth = 1,
+            .pixelHeight = 1,
+            .pixelDepth = 0,
+    };
+
+    const uint8_t texel[3] = {0xff, 0x80, 0x00};
+    if (!bundle.setBlob({0, 0, 0}, texel, sizeof(texel))) {
+        return false;
+    }
+
+    std::vector<uint8_t> serialized(bundle.getSerializedLength());
+    if (!bundle.serialize(serialized.data(), (uint32_t) serialized.size())) {
+        return false;
+    }
+
+    image::Ktx1Bundle restored(serialized.data(), (uint32_t) serialized.size());
+    uint8_t* data = nullptr;
+    uint32_t size = 0;
+    return restored.getNumMipLevels() == 1 && restored.getArrayLength() == 1 &&
+            restored.getBlob({0, 0, 0}, &data, &size) && size == sizeof(texel) &&
+            !ktxreader::Ktx1Reader::isCompressed(restored.getInfo());
+}
 
 int main(int argc, char** argv) {
     using namespace filament;
 
     if (argc != 2) {
         return 1;
+    }
+
+    if (!checkKtx1RoundTrip()) {
+        return 5;
     }
 
     Engine* engine = Engine::create(Engine::Backend::NOOP);

@@ -180,22 +180,6 @@ outputs:
           - if: target_platform != "linux-ppc64le"
             then: matc -a opengl -p desktop -o bakedColor.filamat bakedColor.mat
             else: matc -a vulkan -p desktop -o bakedColor.filamat bakedColor.mat
-      - files:
-          recipe:
-            - test-cmake-ktxreader
-        requirements:
-          run:
-            - ${{ compiler('cxx') }}
-            - ${{ stdlib('c') }}
-            - cmake
-            - ninja
-        script:
-          # CPU-only KTX1 round-trip: no Engine, window or GPU driver needed.
-          - cmake -S test-cmake-ktxreader -B test-cmake-ktxreader-build -G Ninja -DCMAKE_BUILD_TYPE=Release
-          - cmake --build test-cmake-ktxreader-build --verbose
-          - if: unix
-            then: ./test-cmake-ktxreader-build/ktx1_roundtrip
-            else: .\test-cmake-ktxreader-build\ktx1_roundtrip.exe
   - package:
       name: filament-filagui-static
     inherit:
