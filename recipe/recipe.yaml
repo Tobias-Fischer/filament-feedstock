@@ -109,7 +109,6 @@ outputs:
         - Library/include/math
         - Library/include/utils
         - Library/lib/backend.lib
-        - Library/lib/bluegl.lib
         - Library/lib/bluevk.lib
         - Library/lib/cmake/Filament
         - Library/lib/filabridge.lib
