@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: conda-forge <conda-forge@users.noreply.github.com>
+Date: Wed, 14 Oct 2026 12:00:00 -0700
+Subject: [PATCH] Build gltfio_core as a shared library
+
+Downstream consumers link gltfio_core against the shared Filament
+libraries; nothing this recipe builds links it, so it becomes shared
+directly.
+The data-only uberarchive stays static, assembled with a non-executable
+stack note.
+---
+ libs/gltfio/CMakeLists.txt |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/libs/gltfio/CMakeLists.txt b/libs/gltfio/CMakeLists.txt
+index cc8d0db..dac70ec 100644
+--- a/libs/gltfio/CMakeLists.txt
++++ b/libs/gltfio/CMakeLists.txt
+@@ -178,6 +178,11 @@ add_custom_command(OUTPUT ${DUMMY_SRC} COMMAND echo "//" > ${DUMMY_SRC})
+ add_library(uberarchive ${DUMMY_SRC} ${RESGEN_SOURCE})
+ target_include_directories(uberarchive PUBLIC ${RESOURCE_DIR})
+ set_target_properties(uberarchive PROPERTIES FOLDER Libs)
++if (LINUX)
++    # The resgen assembly lacks a .note.GNU-stack section; without this, linking the archive
++    # would mark the consumer's stack executable.
++    target_compile_options(uberarchive PRIVATE $<$<COMPILE_LANGUAGE:ASM>:-Wa,--noexecstack>)
++endif()
+ 
+ # ==================================================================================================
+ # Build the "core" library (no filamat)
+@@ -190,7 +195,7 @@ endif()
+ include_directories(${PUBLIC_HDR_DIR} ${RESOURCE_DIR})
+ link_libraries(math utils filament cgltf stb ktxreader geometry tsl uberzlib)
+ 
+-add_library(gltfio_core STATIC ${PUBLIC_HDRS} ${SRCS})
++add_library(gltfio_core SHARED ${PUBLIC_HDRS} ${SRCS})
+ 
+ target_include_directories(gltfio_core PUBLIC ${PUBLIC_HDR_DIR})
+ set_target_properties(gltfio_core PROPERTIES FOLDER Libs)

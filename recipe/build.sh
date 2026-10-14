@@ -39,6 +39,7 @@ build_targets=(
   filament
   filamesh
   geometry
+  gltfio_core
   glslminifier
   image
   ktxreader
@@ -53,6 +54,7 @@ build_targets=(
   smol-v
   specgen
   specular-color
+  uberarchive
   uberz
   utils
 )
@@ -137,6 +139,7 @@ for header_dir in \
   libs/filameshio/include/filameshio \
   libs/filagui/include/filagui \
   libs/geometry/include/geometry \
+  libs/gltfio/include/gltfio \
   libs/image/include/image \
   libs/ktxreader/include/ktxreader \
   libs/math/include/math \
@@ -152,6 +155,7 @@ filament_shared_libraries=(
   libs/filaflat/libfilaflat
   libs/filameshio/libfilameshio
   libs/geometry/libgeometry
+  libs/gltfio/libgltfio_core
   libs/image/libimage
   libs/ktxreader/libktxreader
   libs/utils/libutils
@@ -175,6 +179,11 @@ done
 
 test -f build/libs/filagui/libfilagui.a
 install -m 644 build/libs/filagui/libfilagui.a "${PREFIX}/lib/libfilagui.a"
+
+# Data-only archive with the default glTF ubershader materials; see patch 0008.
+test -f build/libs/gltfio/libuberarchive.a
+install -m 644 build/libs/gltfio/libuberarchive.a "${PREFIX}/lib/libuberarchive.a"
+install -D -m 644 build/libs/gltfio/materials/uberarchive.h "${PREFIX}/include/gltfio/materials/uberarchive.h"
 
 if [[ "${target_platform}" == osx-* ]]; then
   for dylib in "${PREFIX}"/lib/lib*.dylib; do

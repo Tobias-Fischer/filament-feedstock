@@ -116,3 +116,8 @@ for forbidden_prefix in (
     matches = sorted(path for path in package_files if path.startswith(forbidden_prefix))
     if matches:
         fail("filament package ships vendored headers: " + ", ".join(matches[:10]))
+
+for split_prefix in (f"{package_root}include/gltfio/", "lib/libgltfio_core."):
+    matches = sorted(path for path in package_files if path.startswith(split_prefix))
+    if matches:
+        fail("filament package ships filament-gltfio files: " + ", ".join(matches[:10]))

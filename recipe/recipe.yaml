@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: filament
   version: "1.78.0"
-  build_number: 0
+  build_number: 1
   imgui_version: "1.92.9"
   python: "3.12"
 
@@ -28,6 +28,9 @@ source:
       - patches/0006-use-selected-imgui-source.patch
       # Use the current ImDrawData API required by Dear ImGui 1.92.9 docking.
       - patches/0007-use-current-imgui-command-list-api.patch
+      # Remove with the shared-library patch, or when upstream supports
+      # building gltfio shared (google/filament#1075).
+      - patches/0008-build-shared-gltfio-core.patch
   # Build Filagui and test its consumer-supplied ImGui contract against docking.
   - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz
     sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73
@@ -87,45 +90,49 @@ outputs:
     inherit: filament-build
     build:
       files:
-        - LICENSE
-        - README.md
-        - bin/*
-        - docs/*
-        - include/backend
-        - include/bluevk
-        - include/filaflat
-        - include/filament
-        - include/filameshio
-        - include/geometry
-        - include/image
-        - include/ktxreader
-        - include/math
-        - include/utils
-        - lib/cmake/Filament
-        - lib/lib*.dylib
-        - lib/lib*.so*
-        - Library/bin/*
-        - Library/include/backend
-        - Library/include/bluevk
-        - Library/include/filaflat
-        - Library/include/filament
-        - Library/include/filameshio
-        - Library/include/geometry
-        - Library/include/image
-        - Library/include/ktxreader
-        - Library/include/math
-        - Library/include/utils
-        - Library/lib/backend.lib
-        - Library/lib/bluevk.lib
-        - Library/lib/cmake/Filament
-        - Library/lib/filabridge.lib
-        - Library/lib/filaflat.lib
-        - Library/lib/filament.lib
-        - Library/lib/filameshio.lib
-        - Library/lib/geometry.lib
-        - Library/lib/image.lib
-        - Library/lib/ktxreader.lib
-        - Library/lib/utils.lib
+        include:
+          - LICENSE
+          - README.md
+          - bin/*
+          - docs/*
+          - include/backend
+          - include/bluevk
+          - include/filaflat
+          - include/filament
+          - include/filameshio
+          - include/geometry
+          - include/image
+          - include/ktxreader
+          - include/math
+          - include/utils
+          - lib/cmake/Filament
+          - lib/lib*.dylib
+          - lib/lib*.so*
+          - Library/bin/*
+          - Library/include/backend
+          - Library/include/bluevk
+          - Library/include/filaflat
+          - Library/include/filament
+          - Library/include/filameshio
+          - Library/include/geometry
+          - Library/include/image
+          - Library/include/ktxreader
+          - Library/include/math
+          - Library/include/utils
+          - Library/lib/backend.lib
+          - Library/lib/bluevk.lib
+          - Library/lib/cmake/Filament
+          - Library/lib/filabridge.lib
+          - Library/lib/filaflat.lib
+          - Library/lib/filament.lib
+          - Library/lib/filameshio.lib
+          - Library/lib/geometry.lib
+          - Library/lib/image.lib
+          - Library/lib/ktxreader.lib
+          - Library/lib/utils.lib
+        exclude:
+          # Shipped by filament-gltfio.
+          - lib/libgltfio_core.*
     requirements:
       # Staging requirements are not inherited once an output adds requirements.
       build:
@@ -323,6 +330,59 @@ outputs:
             then: ./test-cmake-docking-build/hello_world
           - if: win
             then: .\test-cmake-docking-build\hello_world.exe
+  - package:
+      name: filament-gltfio
+    inherit:
+      from: filament-build
+      run_exports: false
+    build:
+      # Not built on Windows yet: the DLL would need the export work that
+      # patch 0005 does for the core libraries, and the uberarchive data
+      # symbol cannot be imported from a DLL without dllimport.
+      skip: win
+      files:
+        - include/gltfio
+        - lib/libgltfio_core.dylib
+        - lib/libgltfio_core.so
+        # Data-only archive holding the default ubershader materials. A shared
+        # library would hand consumers its data through copy relocations.
+        - lib/libuberarchive.a
+    requirements:
+      build:
+        - ${{ compiler('c') }}
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+      host:
+        - ${{ pin_subpackage('filament', exact=True) }}
+        - if: target_platform in ("linux-64", "osx-64")
+          then: meshoptimizer
+        - zstd
+      run:
+        - ${{ pin_subpackage('filament', exact=True) }}
+      run_exports:
+        - ${{ pin_subpackage('filament-gltfio', upper_bound='x.x', build=filament_window_system ~ '_*') }}
+    tests:
+      - package_contents:
+          include:
+            - gltfio/AssetLoader.h
+            - gltfio/materials/uberarchive.h
+          lib:
+            - gltfio_core
+          files:
+            - lib/libuberarchive.a
+      - files:
+          recipe:
+            - test-cmake-gltfio
+        requirements:
+          run:
+            - ${{ compiler('cxx') }}
+            - ${{ stdlib('c') }}
+            - cmake
+            - ninja
+        script:
+          - cmake -S test-cmake-gltfio -B test-cmake-gltfio-build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          - cmake --build test-cmake-gltfio-build --verbose
+          - ctest --test-dir test-cmake-gltfio-build --output-on-failure --no-tests=error
 
 about:
   summary: Real-time physically based rendering engine
@@ -342,6 +402,9 @@ about:
     ${{ imgui_version }} docking headers but does not package or link an ImGui
     implementation. Consumers must link exactly one matching implementation:
     conda-forge's mainline imgui package or their own docking build.
+    The optional filament-gltfio output adds the shared glTF loader
+    (libgltfio_core, ubershader materials only) and the default ubershader
+    archive as a data-only static library. It is not built for Windows yet.
     Linux x86-64 packages provide mutually exclusive x11 and wayland build
     variants. X11 remains the default; request filament=*=wayland_* for native
     Wayland support, which uses Filament's Vulkan backend.
@@ -354,6 +417,7 @@ about:
     - third_party/civetweb/LICENSE.md
     - third_party/clang/LICENSE.TXT
     - third_party/dawn/LICENSE
+    - third_party/draco/LICENSE
     - third_party/getopt/LICENSE
     - third_party/gl-matrix/LICENSE.md
     - third_party/glslang/LICENSE
@@ -363,6 +427,7 @@ about:
     - third_party/jsmn/LICENSE
     - third_party/libgtest/LICENSE
     - third_party/markdeep/LICENSE
+    - third_party/meshoptimizer/LICENSE
     - third_party/robin-map/LICENSE
     - third_party/smol-v/LICENSE
     - third_party/spirv-cross/LICENSE
