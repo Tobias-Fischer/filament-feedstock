@@ -183,7 +183,9 @@ install -m 644 build/libs/filagui/libfilagui.a "${PREFIX}/lib/libfilagui.a"
 # Data-only archive with the default glTF ubershader materials; see patch 0008.
 test -f build/libs/gltfio/libuberarchive.a
 install -m 644 build/libs/gltfio/libuberarchive.a "${PREFIX}/lib/libuberarchive.a"
-install -D -m 644 build/libs/gltfio/materials/uberarchive.h "${PREFIX}/include/gltfio/materials/uberarchive.h"
+# BSD install on macOS has no -D, so create the directory first.
+mkdir -p "${PREFIX}/include/gltfio/materials"
+install -m 644 build/libs/gltfio/materials/uberarchive.h "${PREFIX}/include/gltfio/materials/"
 
 if [[ "${target_platform}" == osx-* ]]; then
   for dylib in "${PREFIX}"/lib/lib*.dylib; do
