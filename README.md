@@ -26,6 +26,9 @@ The optional filament-filagui-static output is built against Dear ImGui
 1.92.9 docking headers but does not package or link an ImGui
 implementation. Consumers must link exactly one matching implementation:
 conda-forge's mainline imgui package or their own docking build.
+The optional filament-gltfio output adds the shared glTF loader
+(libgltfio_core, ubershader materials only) and the default ubershader
+archive as a data-only static library. It is not built for Windows yet.
 Linux x86-64 packages provide mutually exclusive x11 and wayland build
 variants. X11 remains the default; request filament=*=wayland_* for native
 Wayland support, which uses Filament's Vulkan backend.
@@ -84,6 +87,7 @@ Current release info
 | [![Conda Recipe](https://img.shields.io/badge/recipe-filament-green.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament.svg)](https://anaconda.org/conda-forge/filament) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-filament--bluegl--static-green.svg)](https://anaconda.org/conda-forge/filament-bluegl-static) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament-bluegl-static.svg)](https://anaconda.org/conda-forge/filament-bluegl-static) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament-bluegl-static.svg)](https://anaconda.org/conda-forge/filament-bluegl-static) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament-bluegl-static.svg)](https://anaconda.org/conda-forge/filament-bluegl-static) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-filament--filagui--static-green.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament-filagui-static.svg)](https://anaconda.org/conda-forge/filament-filagui-static) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-filament--gltfio-green.svg)](https://anaconda.org/conda-forge/filament-gltfio) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/filament-gltfio.svg)](https://anaconda.org/conda-forge/filament-gltfio) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/filament-gltfio.svg)](https://anaconda.org/conda-forge/filament-gltfio) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/filament-gltfio.svg)](https://anaconda.org/conda-forge/filament-gltfio) |
 
 Installing filament
 ===================
@@ -102,7 +106,7 @@ How to use
 <summary>With conda</summary>
 
 ```
-conda install filament filament-bluegl-static filament-filagui-static
+conda install filament filament-bluegl-static filament-filagui-static filament-gltfio
 ```
 
 </details>
@@ -111,7 +115,7 @@ conda install filament filament-bluegl-static filament-filagui-static
 <summary>With mamba</summary>
 
 ```
-mamba install filament filament-bluegl-static filament-filagui-static
+mamba install filament filament-bluegl-static filament-filagui-static filament-gltfio
 ```
 
 </details>
@@ -121,9 +125,9 @@ mamba install filament filament-bluegl-static filament-filagui-static
 
 ```
 # for adding to your local project
-pixi add filament filament-bluegl-static filament-filagui-static
+pixi add filament filament-bluegl-static filament-filagui-static filament-gltfio
 # for installing globally
-pixi global install filament filament-bluegl-static filament-filagui-static
+pixi global install filament filament-bluegl-static filament-filagui-static filament-gltfio
 ```
 
 </details>
