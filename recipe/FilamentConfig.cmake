@@ -116,6 +116,14 @@ if(EXISTS "${_filament_filagui_library}")
   _filament_import_static_library(filagui filagui)
 endif()
 
+# Shipped by the optional filament-gltfio output.
+if(EXISTS "${_filament_runtime_dir}/${_filament_library_prefix}gltfio_core${_filament_shared_suffix}")
+  _filament_import_library(gltfio_core gltfio_core)
+endif()
+if(EXISTS "${PACKAGE_PREFIX_DIR}/lib/libuberarchive.a")
+  _filament_import_static_library(uberarchive uberarchive)
+endif()
+
 if(Filament_FOUND)
   set_target_properties(Filament::utils PROPERTIES
     INTERFACE_LINK_LIBRARIES "tsl::robin_map"
@@ -138,6 +146,11 @@ if(Filament_FOUND)
     # Filagui leaves Dear ImGui unresolved so consumers can link one compatible
     # mainline or docking implementation themselves.
     set_target_properties(Filament::filagui PROPERTIES
+      INTERFACE_LINK_LIBRARIES "Filament::filament"
+    )
+  endif()
+  if(TARGET Filament::gltfio_core)
+    set_target_properties(Filament::gltfio_core PROPERTIES
       INTERFACE_LINK_LIBRARIES "Filament::filament"
     )
   endif()
