@@ -31,6 +31,10 @@ source:
       # Remove with the shared-library patch, or when upstream supports
       # building gltfio shared (google/filament#1075).
       - patches/0008-build-shared-gltfio-core.patch
+      # Remove when upstream guards MTLBindingAccessReadOnly (macOS 14 SDK, from
+      # google/filament#10356) for older SDKs, or when the conda-forge build moves
+      # to a macOS 14+ SDK.
+      - patches/0009-support-macos-11-sdk-binding-access.patch
   # Build Filagui and test its consumer-supplied ImGui contract against docking.
   - url: https://github.com/ocornut/imgui/archive/refs/tags/v${{ imgui_version }}-docking.tar.gz
     sha256: 61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73
