@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jeongseok Lee <jeongseok@meta.com>
+Date: Wed, 21 Oct 2026 13:54:10 -0700
+Subject: [PATCH] Support the macOS 11 SDK's Metal argument access enum
+
+Filament 1.78.1 (google/filament#10356) sets MTLArgumentDescriptor.access
+to MTLBindingAccessReadOnly, which first appeared in the macOS 14 SDK.
+conda-forge builds against the macOS 11 SDK, where the same value is
+spelled MTLArgumentAccessReadOnly, so alias it for older SDKs only.
+---
+ filament/backend/src/metal/MetalEnums.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/filament/backend/src/metal/MetalEnums.h b/filament/backend/src/metal/MetalEnums.h
+index 0d42baa..3b24421 100644
+--- a/filament/backend/src/metal/MetalEnums.h
++++ b/filament/backend/src/metal/MetalEnums.h
+@@ -24,6 +24,12 @@
+ #include <Availability.h>
+ #include <Metal/Metal.h>
+ 
++// MTLBindingAccess first appeared in the macOS 14 SDK; older SDKs only have
++// MTLArgumentAccess, whose read-only value is the same.
++#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED < 140000
++#define MTLBindingAccessReadOnly MTLArgumentAccessReadOnly
++#endif
++
+ namespace filament {
+ namespace backend {
+ 
+-- 
+2.56.0
+
